@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
     }
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
@@ -32,12 +33,31 @@ class ViewController: UIViewController {
             userIsInTheMiddleOfTypingANumber = true
         }
         
-        print("\(digit)")
     }
     
-    @IBAction func clear() {
-        displayValue = 0
+    @IBAction func undo() {
+        if userIsInTheMiddleOfTypingANumber {
+            let digitToRemove  = displayValue! % 10
+            displayValue = (displayValue! - digitToRemove) / 10
+        }else {
+            brain.undoLastOp()
+            history.text = historyValue
+            
+        }
+    }
+    @IBAction func setM() {
+        
+        brain.variableValues["M"] = displayValue
+        brain.pushOperand("M")
+    }
+    @IBAction func getM() {
+        displayValue = brain.variableValues["M"]
+        brain.pushOperand("M")
         enter()
+    }
+    @IBAction func clear() {
+        brain.clear()
+        history.text = historyValue
     }
     
     @IBAction func operate(sender: UIButton) {
@@ -51,29 +71,49 @@ class ViewController: UIViewController {
             }else{
                 displayValue = 0
             }
+            history.text = historyValue
         }
     }
 
     
     @IBAction func enter() {
         userIsInTheMiddleOfTypingANumber = false
-        if let result = brain.pushOperand(displayValue) {
-            displayValue = result
-        }else{
-            displayValue = 0
+        if let displayText = displayValue {
+            if let result = brain.pushOperand(displayText) {
+                displayValue = result
+            }else{
+                displayValue = 0
+            }
         }
     }
     
-    var displayValue : Double {
+    var displayValue : Double? {
         get {
-            return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+            return NSNumberFormatter().numberFromString(display.text!)?.doubleValue
         }
         set {
-            display.text = "\(newValue)"
-            userIsInTheMiddleOfTypingANumber = false
+            //userIsInTheMiddleOfTypingANumber = false
+            if let value = newValue {
+                print("\(Int(value))")
+                display.text = removeDecimalIfNotUsed(value)
+                
+            }else {
+                display.text = "0"
+            }
+            
         }
     }
-
+    
+    var historyValue: String {
+        get {
+            return brain.description
+        }
+    }
+    
+    func removeDecimalIfNotUsed(number: Double) -> String {
+        
+        return number == floor(number) ? "\(Int(number))" : "\(number)"
+    }
 
 }
 
