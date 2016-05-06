@@ -172,7 +172,7 @@ class CalculatorBrain : CustomStringConvertible
             case .unaryOperation(let unaryOperator, _):
                 let operand = convertToInfix(remainingOps)
                 if let unaryOperand = operand.expression {
-                    return (unaryOperator + unaryOperand, operand.remainingOps)
+                    return (unaryOperator + "(\(unaryOperand))", operand.remainingOps)
                 }else {
                     return ("\(unaryOperator)(?)", remainingOps)
                 }
@@ -196,18 +196,14 @@ class CalculatorBrain : CustomStringConvertible
     
     private func convertToInfix() -> String? {
         
-        let (expression , remaingOps) = convertToInfix(opStack)
-//        var (result, ops) = ("", opStack)
-//        
-//        while ops.count > 0 {
-//            var current: String?
-//            (current, ops) = convertToInfix(opStack)
-//            result = result == "" ? current! : "\(current!), \(result)"
-//        }
-//        return result
+        var description = [String]()
+        var infixExpression: (expression: String? , remainingOps: [Op]) = (nil , opStack)
+        repeat {
+            infixExpression = convertToInfix(infixExpression.remainingOps)
+            if infixExpression.expression != nil { description.append(infixExpression.expression!) }
+        } while !infixExpression.remainingOps.isEmpty
         
-        print("expression is: \(expression) and remainder: \(remaingOps)")
-        return expression
+        return description.reverse().joinWithSeparator(", ")
     }
     
     var description: String {

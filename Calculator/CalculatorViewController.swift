@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CalculatorViewController.swift
 //  Calculator
 //
 //  Created by Moaz Ahmed on 10/20/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class CalculatorViewController: UIViewController {
 
     @IBOutlet weak var display: UILabel!
     @IBOutlet weak var history: UILabel!
@@ -58,6 +58,7 @@ class ViewController: UIViewController {
     @IBAction func clear() {
         brain.clear()
         history.text = historyValue
+        displayValue = 0
     }
     
     @IBAction func operate(sender: UIButton) {
@@ -84,6 +85,7 @@ class ViewController: UIViewController {
             }else{
                 displayValue = 0
             }
+            history.text = historyValue
         }
     }
     
@@ -113,6 +115,15 @@ class ViewController: UIViewController {
     func removeDecimalIfNotUsed(number: Double) -> String {
         
         return number == floor(number) ? "\(Int(number))" : "\(number)"
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "graphSegue" {
+            if let graphViewController = segue.destinationViewController as? GraphViewController {
+                graphViewController.calculatorBrain = brain
+            }
+            
+        }
     }
 
 }
