@@ -43,7 +43,7 @@ class AxesDrawer
 
     func drawAxesInRect(bounds: CGRect, origin: CGPoint, pointsPerUnit: CGFloat)
     {
-        CGContextSaveGState(UIGraphicsGetCurrentContext())
+        CGContextSaveGState(UIGraphicsGetCurrentContext()!)
         color.set()
         let path = UIBezierPath()
         path.moveToPoint(CGPoint(x: bounds.minX, y: align(origin.y)))
@@ -52,7 +52,7 @@ class AxesDrawer
         path.addLineToPoint(CGPoint(x: align(origin.x), y: bounds.maxY))
         path.stroke()
         drawHashmarksInRect(bounds, origin: origin, pointsPerUnit: abs(pointsPerUnit))
-        CGContextRestoreGState(UIGraphicsGetCurrentContext())
+        CGContextRestoreGState(UIGraphicsGetCurrentContext()!)
     }
 
     // the rest of this class is private
